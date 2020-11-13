@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP8266-DHT11</title>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-database.js"></script>
+  <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css"
+    integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/cmGauge.css">
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    html {
+      display: table;
+      margin: auto;
+    }
+
+    body {
+      background-color: #333;
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .container {
+      margin: 150px auto;
+      display: flex;
+      align-items: center;
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      align-content: center;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      color: #fff;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    // Your web app's Firebase configuration
+    // CHANGE THIS
+    var firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      databaseURL: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: "",
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
+    var hdt11JsonRef = database.ref("playground/dht11");
+  </script>
+  <div>
+    <div>
+      <h1>Temperature is : </h1>
+      <h1 id="temp">0</h1>
+    </div>
+    <div id="TempGauge" class="gauge gauge-big gauge-green">
+      <div class="gauge-arrow" data-percentage="50" style="transform: rotate(0deg);"></div>
+    </div>
+  </div>
+  <div>
+    <div>
+      <h1>Humidity is:</h1>
+      <h1 id="hum">0</h1>
+      <div id="HumdGauge" class="gauge gauge-big gauge-green">
+        <div class="gauge-arrow" data-percentage="50" style="transform: rotate(0deg);"></div>
+      </div>
+    </div>
+  </div>
+  <h4>Last updated at: </h4>
+  <h5 id='date'></h5>
+  </div>
+  <button onClick="start()">START</button>
+  <button onClick="stop()">STOP</button>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="js/cmGauge.js"></script>
+  <script type="text/javascript">
+    hdt11JsonRef.on("value", function (snapshot) {
+      $('#TempGauge .gauge-arrow').trigger('updateGauge', snapshot.val().temperature);
+      $('#HumdGauge .gauge-arrow').trigger('updateGauge', snapshot.val().humidity);
+      document.getElementById("temp").innerHTML = snapshot.val().temperature;
+      document.getElementById("hum").innerHTML = snapshot.val().humidity;
+      var t = new Date();
+      document.getElementById("date").innerHTML = t.getHours() + " : " + t.getMinutes() + " : " + t.getSeconds();
+    });
+    $('#TempGauge .gauge-arrow').cmGauge();
+    $('#HumdGauge .gauge-arrow').cmGauge();
+    function start() {
+      firebase.database().ref('playground/readDHT11').set(1);
+      alert('started');
+    }
+    function stop() {
+      firebase.database().ref('playground/readDHT11').set(0);
+      alert('stopped');
+    }
+  </script>
+</body>
+
+</html>
