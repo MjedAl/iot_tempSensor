@@ -13,6 +13,6 @@ then edit the WiFi and Firebase information in the Arduino sketch [Sketch](/Sket
 and add the Firebase config in [index.html](/HTML/index.html)  
 You should be good to go now :)
 
-## To imrove
+## To improve
 Well this is not a completed project.  
 i would mainly say it's missing authentication so that only the owner can edit and view the DB.
